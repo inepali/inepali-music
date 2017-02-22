@@ -1,0 +1,14 @@
+<ion-view view-title="What is New?" ng-init="loadRecents()">
+  <ion-content>
+      <ion-refresher pulling-text="Pull to refresh..." on-refresh="loadRecents()"></ion-refresher>
+      <div class="item item-divider">
+      What's New?
+   </div>
+      <div class="card card-primary" ng-repeat="recent in recents track by $index">
+          <div class="item item-text-wrap">
+              <h2>{{recent.deatails}}</h2>
+              <h4>{{recent.createDate | date:'yyyy-MM-dd HH:mm:ss'}}</h4>
+          </div>
+      </div>
+  </ion-content>
+</ion-view>

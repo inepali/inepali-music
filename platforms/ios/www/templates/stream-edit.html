@@ -1,0 +1,31 @@
+<ion-view view-title="Update">
+      <ion-content padding="true">
+
+
+            <label class="item item-input">
+          <span class="input-label" floating ng-required="required">Name</span>
+          <input type="text" ng-model="stream.name" />
+    </label>
+
+            <label class="item item-input">
+          <span class="input-label floating">Description</span>
+          <input type="text" ng-model="stream.description" />
+    </label>
+
+            <label class="item item-input">
+          <span class="input-label floating">Stream URL</span>
+          <input type="text" ng-model="stream.url" />
+    </label>
+
+            <label class="item item-input">
+          <span class="input-label floating">Icon URL</span>
+          <input type="text" ng-model="stream.iconUrl" />
+    </label>
+
+
+            <button type="button" class="button button-block button-dark" ng-click="save()">Save</button>
+            <button type="button" class="button button-block button-assertive" ng-click="deleteX()">Delete</button>
+
+
+      </ion-content>
+</ion-view>

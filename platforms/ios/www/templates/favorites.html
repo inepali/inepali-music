@@ -1,0 +1,47 @@
+<ion-view view-title="My Favorites" ng-init="loadFavorites()">
+
+    <ion-nav-buttons side="right">
+        <div class="button button-clear ion-trash-b" ng-click="enableDelete()" ng-show="showDeleteButton"></div>
+        <div class="button button-clear ion-android-cancel" ng-click="cancelDelete()" ng-show="!showDeleteButton"></div>
+    </ion-nav-buttons>
+
+
+<div class="tabs-striped tabs-top tabs-color-default">
+    <div class="tabs tabs-icon-top">
+      <a class="tab-item {{Tab==0?'active':''}}" ng-click="changeTab(0)">
+        <i class="icon ion-ios-albums"></i>
+        Music Albums
+      </a>
+      <a class="tab-item {{Tab==1?'active':''}}" ng-click="changeTab(1)">
+        <i class="icon ion-music-note"></i>
+        Songs/Tracks
+      </a>
+    </div>
+  </div>
+
+    <ion-content class="has-header has-subheader has-tabs">
+        <ion-refresher pulling-text="Pull to refresh..." on-refresh="loadFavorites()"></ion-refresher>
+        <ion-list show-delete="shouldShowDelete">
+            <ion-item ng-show="Tab==0" ng-repeat="item in favorites | filter: { isAlbum: 'true' }" class="item item-avatar" ng-href="#/app/playlist/{{item.id}}">
+                <ion-delete-button class="ion-minus-circled" ng-click="delete($index)"></ion-delete-button>
+                <img ng-src="{{item.iconUrl==null?'img/icon.png':item.iconUrl}}" />
+                <h2>{{item.title | underscore}}</h2>
+                <h4>{{item.description | underscore}}</h4>
+
+            </ion-item>
+
+            
+            <ion-item ng-show="Tab==1" ng-repeat="item in favorites | filter: { isAlbum: 'false' }" class="item item-avatar"  ng-click="play(item)">
+                <ion-delete-button class="ion-minus-circled" ng-click="delete($index)"></ion-delete-button>
+                <img ng-src="{{item.iconUrl==null?'img/icon.png':item.iconUrl}}" />
+                <img style="float:right;padding-top:5px" ng-src="img/eq.gif" ng-show="item.title==currentStream.title" />           
+                <h2>{{item.title | underscore}}</h2>
+                <h4>{{item.description | underscore}}</h4>
+
+            </ion-item>
+
+        </ion-list>
+
+
+    </ion-content>
+</ion-view>

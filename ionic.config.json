@@ -1,0 +1,13 @@
+{
+  "name": "iNepali Music",
+  "app_id": "b01155f0",
+  "gulpStartupTasks": [
+    "sass",
+    "watch"
+  ],
+  "watchPatterns": [
+    "www/**/*",
+    "!www/lib/**/*",
+    "!www/**/*.map"
+  ]
+}
