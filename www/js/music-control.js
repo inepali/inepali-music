@@ -1,51 +1,36 @@
-angular.module('iNepali.controls', [])
-    .factory('MusicControl', function ($window) {
+angular.module('iNepali.music-controls', [])
+    .factory('MusicControls', function ($window, $rootScope) {
         var _musicControl;
-        var _track;
-        var _artist;
-        var _cover;
-        var _isPlaying;
-        var _isDismissable;
-
-        var _hasPrev;
-        var _hasNext;
-        var _hasClose;
-
-        var _album;
-        var _duration;
-        var _elapsed;
-
-        var _ticker;
-
+        
         var onSuccess = function(response)
         {
             console.log(resposne);
+            console.log("Music Control created");
         };
 
         var onError = function(err){
             console.log(err)
+            
+            
         }
-
-
-
 
         return {
             events: function (action) {
                 switch (action) {
                     case 'music-controls-next':
-                        // Do something
+                        $rootScope.playNext();
                         break;
                     case 'music-controls-previous':
-                        // Do something
+                        $rootScope.playPrevious()
                         break;
                     case 'music-controls-pause':
-                        // Do something
+                        $rootScope.pause();
                         break;
                     case 'music-controls-play':
-                        // Do something
+                        $rootScope.play();
                         break;
                     case 'music-controls-destroy':
-                        // Do something
+                        $rootScope.release();
                         break;
 
                     // External controls (iOS only)
@@ -59,7 +44,7 @@ angular.module('iNepali.controls', [])
                         // Do something
                         break;
                     case 'music-controls-headset-unplugged':
-                        // Do something
+                        $rootScope.stop();
                         break;
                     case 'music-controls-headset-plugged':
                         // Do something
@@ -67,20 +52,23 @@ angular.module('iNepali.controls', [])
                     default:
                         break;
                 }
-
+                    console.log("Music Control events registered");
             },
+            create: function (_track, _hasPrev, _hasNext, _hasClose, _album) {
+                this.init();
 
-            create: function () {
                 if (_musicControl) {
 
+                    console.log("Music Control events registered");
+
                     _musicControl.create({
-                        track: _track,        // optional, default : ''
-                        artist: _artist,      // optional, default : ''
-                        cover: _cover,        // optional, default : nothing
+                        track: _track.title,        // optional, default : ''
+                        artist: _track.description,      // optional, default : ''
+                        cover: _track.iconUrl,        // optional, default : nothing
                         // cover can be a local path (use fullpath 'file:///storage/emulated/...', or only 'my_image.jpg' if my_image.jpg is in the www folder of your app)
                         //           or a remote url ('http://...', 'https://...', 'ftp://...')
-                        isPlaying: _isPlaying,           // optional, default : true
-                        dismissable: _isDismissable,     // optional, default : false
+                        //isPlaying: _isPlaying,           // optional, default : true
+                        //dismissable: _isDismissable,     // optional, default : false
 
                         // hide previous/next/close buttons:
                         hasPrev: _hasPrev,      // show previous button, optional, default: true
@@ -88,15 +76,19 @@ angular.module('iNepali.controls', [])
                         hasClose: _hasClose,       // show close button, optional, default: false
 
                         // iOS only, optional
-                        album: _album,     // optional, default: ''
-                        duration: _duration,          // optional, default: 0
-                        elapsed: _elapsed,            // optional, default: 0
+                        album: _album==null?'':_album.title,     // optional, default: ''
+                        //duration: _duration,          // optional, default: 0
+                        //elapsed: _elapsed,            // optional, default: 0
 
                         // Android only, optional
                         // text displayed in the status bar when the notification (and the ticker) are updated
-                        ticker: _ticker
-                    }, onSuccess, onError);
+                        ticker: "Playing " + _track.title
+                    }, this.onSuccess, this.onError);
 
+                    console.log("No Music Control Availalbe");
+
+                } else {
+                    console.log("No Music Control Availalbe");
                 }
 
             },
@@ -113,12 +105,11 @@ angular.module('iNepali.controls', [])
                     // The plugin will run the events function each time an event is fired
                     _musicControl.listen();
 
+                    console.log("Music Control Availalbe");
 
                 } else {
                     console.log("No Music Control Availalbe");
                 }
-
-
 
             },
             destroy: function () {

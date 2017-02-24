@@ -31,12 +31,15 @@
   <script src="js/routings.js"></script>
   <script src="js/admob-services.js"></script>
   <script src="js/app-services.js"></script>
+
   <script src="js/app-filters.js"></script>
+  <!--script src="js/music-control.js"></script-->
 </head>
 
 <body ng-app="iNepali" ng-cloak>
 
 <ion-nav-view>
+  <!--
     <div class="bar bar-assertive bar-subheader" align-title="left"  ng-show="isPlaying">
       <div class="buttons">
         <button class="button button-{{isShuffle?'positive':'clear'}} icon ion-shuffle" ng-click="shuffle()" ng-show="playerQueue.length>1"></button>
@@ -51,7 +54,7 @@
         <button class="button button-clear icon ion-skip-forward" ng-show="playerQueue.length > 1 && playerQueueIndex < playerQueue.length - 1" ng-click="playNext()"></button>
       </div>
     </div>
-
+-->
 
   </ion-nav-view>
 </body>

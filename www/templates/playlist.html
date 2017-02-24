@@ -4,7 +4,7 @@
         <div class="button button-{{(isPlaying && playerQueue.length > 1)?'positive':'clear ion-play'}}" ng-click="playAll()"> {{(isPlaying && playerQueue.length > 1)?'Playing All':'Play All'}}</div>
     </ion-nav-buttons>
 
-    <ion-content class="has-header has-subheader">
+    <ion-content>
         <ion-refresher pulling-text="Pull to refresh..." on-refresh="refreshPlaylist()"></ion-refresher>
 
         <ion-list>
@@ -19,7 +19,7 @@
                 </div>
 
 
-                <img style="float:right;padding-top:5px" ng-src="img/eq.gif" ng-show="item.title==currentStream.title" />
+                <img style="float:right;padding-top:5px" ng-src="img/eq.gif" ng-show="isPlaying && item.title==currentStream.title" />
                 <h2>{{item.title | underscore }} <i ng-click="addToFavorites($event, item)" class="icon {{isFavorite(item)?'ion-happy':'ion-happy-outline'}}"></i></h2>
                 <h4>{{item.description | underscore}}</h4>
 

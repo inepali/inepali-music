@@ -4,7 +4,11 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
   $ionicLoading, $localStorage, $interval, $location, $ionicNavBarDelegate, $ionicPlatform, $cordovaFile, AdMob, AppService) {
 
   // start display ad after 3 minutes  
-  $timeout(function () { $rootScope.showBanner(); }, 3000);
+  $timeout(function () {
+    // show Banner Ad
+    $rootScope.showBanner();
+
+  }, 3000);
 
   $scope.enableDelete = function () {
     $scope.shouldShowDelete = true;
@@ -24,8 +28,6 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
 
   $rootScope.shuffle = function () {
     $rootScope.isShuffle = !$rootScope.isShuffle;
-
-    //$cordovaToast.showLongCenter('Shuffle on/off executed: ' + $rootScope.isShuffle);
   };
 
   $scope.loadLocals = function () {
@@ -52,10 +54,9 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
     $scope.streams = $localStorage.streams;
 
     if ($scope.streams == null) {
-      $ionicLoading.hide();
+      $scope.refreshRadio();
     }
-    
-    $scope.refreshRadio();
+    $ionicLoading.hide();
   };
 
   $scope.refreshRadio = function () {
@@ -67,7 +68,7 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
       $scope.$broadcast('scroll.refreshComplete');
     })
   };
-
+  5
 
   //Loading Albums list available iNepali Database
   $scope.loadAlbums = function () {
@@ -241,6 +242,8 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
     } else if (status == 2) { // MEDIA_RUNNING
       $scope.completed = false;
       $cordovaToast.showShortBottom('Media playing ...');
+      $rootScope.isPlaying = true;
+      MusicControls.updateIsPlaying($rootScope.isPlaying);
     } else if (status == 4) {
       $scope.completed = true;
       $cordovaToast.showShortBottom('Media stopped...');
@@ -270,7 +273,29 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
     $rootScope.playerQueueIndex--;
     $rootScope.play($rootScope.playerQueue[$rootScope.playerQueueIndex]);
   }
+  $rootScope.resume = function () {
+    if ($rootScope.media != null) {
+      $rootScope.media.play();
+      $rootScope.isPlaying = true;
+      MusicControls.updateIsPlaying($rootScope.isPlaying);
+    }
+  }
 
+  $rootScope.pause = function () {
+    if ($rootScope.media != null) {
+      $rootScope.media.pause();
+      $rootScope.isPlaying = false;
+      MusicControls.updateIsPlaying($rootScope.isPlaying);
+    }
+  }
+
+  $rootScope.release = function () {
+    MusicControls.destroy(function () {
+      $rootScope.stop();
+    }, function () {
+      console.log("MusicControls destroy failed");
+    });
+  }
 
   $rootScope.playAll = function () {
 
@@ -287,6 +312,85 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
       $rootScope.play($rootScope.playerQueue[$rootScope.playerQueueIndex]);
     }
   }
+
+  $scope.eventsMusicControls = function (action) {
+    console.log('Events registered');
+    switch (action) {
+      case 'music-controls-next':
+        $rootScope.playNext();
+        break;
+      case 'music-controls-previous':
+        $rootScope.playPrevious()
+        break;
+      case 'music-controls-pause':
+        $rootScope.pause();
+
+        break;
+      case 'music-controls-play':
+        $rootScope.resume();
+        break;
+      case 'music-controls-destroy':
+        $rootScope.release();
+        break;
+
+      // External controls (iOS only)
+      case 'music-controls-toggle-play-pause':
+        // Do something
+        break;
+
+      // Headset events (Android only)
+      // All media button events are listed below
+      case 'music-controls-media-button':
+        // Do something
+        break;
+      case 'music-controls-headset-unplugged':
+        $rootScope.stop();
+        break;
+      case 'music-controls-headset-plugged':
+        // Do something
+        break;
+      default:
+        break;
+    }
+  };
+
+
+
+  $scope.createMusicControls = function (_track) {
+    console.log('Creating Music Controls')
+    MusicControls.create({
+      track: _track.title,        // optional, default : ''
+      artist: _track.description,      // optional, default : ''
+      cover: _track.iconUrl,        // optional, default : nothing
+      // cover can be a local path (use fullpath 'file:///storage/emulated/...', or only 'my_image.jpg' if my_image.jpg is in the www folder of your app)
+      //           or a remote url ('http://...', 'https://...', 'ftp://...')
+      isPlaying: true,           // optional, default : true
+      dismissable: true,     // optional, default : false
+
+      // hide previous/next/close buttons:
+      hasPrev: $scope.hasPrev,      // show previous button, optional, default: true
+      hasNext: $scope.hasNext,      // show next button, optional, default: true
+      hasClose: false,       // show close button, optional, default: false
+
+      // iOS only, optional
+      album: $scope.selectedAlbum == null ? '' : $scope.selectedAlbum.title,     // optional, default: ''
+      duration: $rootScope.duration,          // optional, default: 0
+      elapsed: $rootScope.position,            // optional, default: 0
+
+      // Android only, optional
+      // text displayed in the status bar when the notification (and the ticker) are updated
+      ticker: "iNepali Music is playing " + _track.title
+    }, function () {
+      // When success
+      console.log("MusicControls Create successful")
+
+    }, function () {
+      console.log("MusicControls Create unsuccessful")
+    });
+
+  };
+
+
 
   // Media Play selected
   $rootScope.play = function (track) {
@@ -322,7 +426,7 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
     $scope.timerDur = $interval(function () {
       counter = counter + 100;
       if (counter > 2000) {
-        $interval.cancel(timerDur);
+        $interval.cancel($scope.timerDur);
       }
       var dur = $rootScope.media.getDuration();
       if (dur > 0) {
@@ -353,11 +457,11 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
         if (position > -1) {
           //console.log((position) + " sec");
           $rootScope.position = Math.floor(position);
-          $rootScope.isPlaying = true;
+          //$rootScope.isPlaying = true;
           //$ionicLoading.hide();
-        } else {
-          $rootScope.isPlaying = false;
-        }
+        } //else {
+        //$rootScope.isPlaying = false;
+        //}
       },
         // error callback
         function (e) {
@@ -366,6 +470,35 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
         }
       );
     }, 1000);
+
+    if (!$scope.eventSubscribed) {
+
+      // Register callback 
+      MusicControls.subscribe($scope.eventsMusicControls);
+
+      // Start listening for events 
+      // The plugin will run the events function each time an event is fired 
+      MusicControls.listen();
+
+      $scope.eventSubscribed = true;
+    }
+
+    if (track.id == -1) {
+      $scope.hasPrev = true;
+      $scope.hasNext = true;
+
+      if ($rootScope.playerQueueIndex == 0) {
+        $scope.hasPrev = false;
+      } else if ($rootScope.playerQueue.length > 1 && $rootScope.playerQueueIndex == $rootScope.playerQueue.length - 1) {
+        $scope.hasNext = false;
+      }
+    } else {
+      $scope.hasPrev = false;
+      $scope.hasNext = false;
+    }
+
+    $scope.createMusicControls(track);
+
   };
 
 
@@ -431,4 +564,10 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
   $rootScope.fontsize = 25;
   $rootScope.iconWidth = 40;
   $rootScope.iconHeight = 40;
+  $scope.hasNext = false;
+  $scope.hasPrev = false;
+  $scope.isLiveFm = false;
+  $scope.isAlbum = false;
+
+  $scope.eventSubscribed = false;
 });
