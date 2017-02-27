@@ -7,7 +7,6 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
   $timeout(function () {
     // show Banner Ad
     $rootScope.showBanner();
-
   }, 3000);
 
   $scope.enableDelete = function () {
@@ -356,7 +355,7 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
 
 
 
-  $scope.createMusicControls = function (_track) {
+$scope.createMusicControlsIOS = function (_track) {
     console.log('Creating Music Controls')
     MusicControls.create({
       track: _track.title,        // optional, default : ''
@@ -365,7 +364,7 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
       // cover can be a local path (use fullpath 'file:///storage/emulated/...', or only 'my_image.jpg' if my_image.jpg is in the www folder of your app)
       //           or a remote url ('http://...', 'https://...', 'ftp://...')
       isPlaying: true,           // optional, default : true
-      dismissable: true,     // optional, default : false
+      //dismissable: true,     // optional, default : false
 
       // hide previous/next/close buttons:
       hasPrev: $scope.hasPrev,      // show previous button, optional, default: true
@@ -373,9 +372,44 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
       hasClose: false,       // show close button, optional, default: false
 
       // iOS only, optional
-      album: $scope.selectedAlbum == null ? '' : $scope.selectedAlbum.title,     // optional, default: ''
-      duration: $rootScope.duration,          // optional, default: 0
-      elapsed: $rootScope.position,            // optional, default: 0
+      album: $scope.selectedAlbum == null ? _track.title : $scope.selectedAlbum.title,     // optional, default: ''
+      //duration: $rootScope.duration,          // optional, default: 0
+      //elapsed: $rootScope.position,            // optional, default: 0
+
+      // Android only, optional
+      // text displayed in the status bar when the notification (and the ticker) are updated
+      //ticker: "iNepali Music is playing " + _track.title
+    }, function () {
+      // When success
+      console.log("MusicControls Create successful")
+
+    }, function () {
+      console.log("MusicControls Create unsuccessful")
+    });
+
+  };
+
+
+  $scope.createMusicControls = function (_track) {
+    console.log('Creating Music Controls')
+    MusicControls.create({
+      track: _track.title,        // optional, default : ''
+      artist: _track.description,      // optional, default : ''
+      cover: _track.id==-1?$scope.selectedAlbum.iconUrl:_track.iconUrl,        // optional, default : nothing
+      // cover can be a local path (use fullpath 'file:///storage/emulated/...', or only 'my_image.jpg' if my_image.jpg is in the www folder of your app)
+      //           or a remote url ('http://...', 'https://...', 'ftp://...')
+      isPlaying: true,           // optional, default : true
+      dismissable: true,     // optional, default : false
+
+      // hide previous/next/close buttons:
+      hasPrev: false,//$scope.hasPrev,      // show previous button, optional, default: true
+      hasNext: false, //$scope.hasNext,      // show next button, optional, default: true
+      hasClose: false,       // show close button, optional, default: false
+
+      // iOS only, optional
+      album: $scope.selectedAlbum == null ? _track.title : $scope.selectedAlbum.title,     // optional, default: ''
+      //duration: $rootScope.duration,          // optional, default: 0
+      //elapsed: $rootScope.position,            // optional, default: 0
 
       // Android only, optional
       // text displayed in the status bar when the notification (and the ticker) are updated
@@ -471,8 +505,6 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
       );
     }, 1000);
 
-    if (!$scope.eventSubscribed) {
-
       // Register callback 
       MusicControls.subscribe($scope.eventsMusicControls);
 
@@ -480,10 +512,8 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
       // The plugin will run the events function each time an event is fired 
       MusicControls.listen();
 
-      $scope.eventSubscribed = true;
-    }
 
-    if (track.id == -1) {
+    if (track.id == -1 && $rootScope.playerQueue.length > 1) {
       $scope.hasPrev = true;
       $scope.hasNext = true;
 
@@ -497,7 +527,7 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
       $scope.hasNext = false;
     }
 
-    $scope.createMusicControls(track);
+    $scope.createMusicControlsIOS(track);
 
   };
 
@@ -566,8 +596,5 @@ app.controller('AppController', function ($scope, $http, $rootScope, $timeout, $
   $rootScope.iconHeight = 40;
   $scope.hasNext = false;
   $scope.hasPrev = false;
-  $scope.isLiveFm = false;
-  $scope.isAlbum = false;
 
-  $scope.eventSubscribed = false;
 });

@@ -1,6 +1,6 @@
 {
   "name": "iNepali Music",
-  "version": "2.0.0",
+  "version": "2.6.0",
   "description": "iNepali Music HD improved version of iNepali Music for andriod devices",
   "dependencies": {
     "gulp": "^3.5.6",
