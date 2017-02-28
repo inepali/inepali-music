@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.kakhaga.iNepaliMusic" version="2.6" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.kakhaga.iNepaliMusic" version="11" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
   <name>iNepali Music</name>
-  <description>iNepali Music 2.6 improved and responsive version of iNepali Music for andriod devices</description>
+  <description>iNepali Music is an improved and responsive version of iNepali Music for andriod devices</description>
   <author email="info@inepali.net" href="http://www.inepali.net/">iNepali</author>
   <content src="index.html"/>
   <access origin="*"/>
   <allow-navigation href="*"/>
-  <allow-navigation href="http://192.168.29.254:8100"/>
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>

@@ -360,21 +360,21 @@ $scope.createMusicControlsIOS = function (_track) {
     MusicControls.create({
       track: _track.title,        // optional, default : ''
       artist: _track.description,      // optional, default : ''
-      cover: _track.iconUrl,        // optional, default : nothing
+      //cover: _track.iconUrl,        // optional, default : nothing
       // cover can be a local path (use fullpath 'file:///storage/emulated/...', or only 'my_image.jpg' if my_image.jpg is in the www folder of your app)
       //           or a remote url ('http://...', 'https://...', 'ftp://...')
-      isPlaying: true,           // optional, default : true
+      //isPlaying: true,           // optional, default : true
       //dismissable: true,     // optional, default : false
 
       // hide previous/next/close buttons:
-      hasPrev: $scope.hasPrev,      // show previous button, optional, default: true
-      hasNext: $scope.hasNext,      // show next button, optional, default: true
+      hasPrev: !$scope.hasPrev,      // show previous button, optional, default: true
+      hasNext: !$scope.hasNext,      // show next button, optional, default: true
       hasClose: false,       // show close button, optional, default: false
 
       // iOS only, optional
       album: $scope.selectedAlbum == null ? _track.title : $scope.selectedAlbum.title,     // optional, default: ''
-      //duration: $rootScope.duration,          // optional, default: 0
-      //elapsed: $rootScope.position,            // optional, default: 0
+      duration: 0,//$rootScope.duration,          // optional, default: 0
+      elapsed: 0, //$rootScope.position,            // optional, default: 0
 
       // Android only, optional
       // text displayed in the status bar when the notification (and the ticker) are updated
@@ -527,7 +527,11 @@ $scope.createMusicControlsIOS = function (_track) {
       $scope.hasNext = false;
     }
 
-    $scope.createMusicControlsIOS(track);
+    if ($cordovaDevice.getPlatform() == 'iOS') {
+      $scope.createMusicControlsIOS(track);
+    } else {
+     $scope.createMusicControls(track);
+    }
 
   };
 
